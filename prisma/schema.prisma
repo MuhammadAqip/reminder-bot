@@ -1,0 +1,35 @@
+// Prisma schema — database tugas sekolah
+// Default pakai PostgreSQL (cocok buat jalan 24/7 di VPS).
+// Kalau mau prototipe cepat pakai SQLite, tinggal ganti provider = "sqlite"
+// dan url = "file:./dev.db" (tapi enum tidak didukung SQLite, sudah diantisipasi di bawah).
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Task {
+  id     Int    @id @default(autoincrement())
+  subject String // mata pelajaran, misal "Matematika"
+  title   String // deskripsi tugas, misal "Kerjakan LKS hal 20"
+  deadline DateTime
+
+  // platform asal & tujuan pengiriman reminder: "whatsapp" atau "telegram"
+  platform String
+  chatId   String // JID WhatsApp atau chat id Telegram
+
+  // menyimpan stage reminder yang SUDAH terkirim, dipisah koma. contoh: "35,28"
+  // supaya tidak dikirim dobel. stage = jumlah hari sebelum deadline (35,28,21,14,7)
+  notifiedStages String @default("")
+
+  isDone    Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([deadline])
+  @@index([chatId])
+}

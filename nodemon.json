@@ -1,0 +1,5 @@
+{
+  "ignore": ["wa-auth/*", "node_modules/*", "*.log"],
+  "watch": ["src"],
+  "ext": "js,json"
+}
